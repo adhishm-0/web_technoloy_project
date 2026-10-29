@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   if (!origin || origin === requestOrigin) return next();
   return crossOriginCors(req, res, next);
 });
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '4mb' }));
 app.use(async (req, res, next) => {
   try {
     await connectDB();

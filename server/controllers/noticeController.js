@@ -11,8 +11,13 @@ function validate(req) {
   if (!errors.isEmpty()) { const error = new Error(errors.array()[0].msg); error.status = 400; throw error; }
 }
 function safeSearch(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+function hasValidEventRange(fields, current = {}) {
+  const start = fields.eventStartAt ?? current.eventStartAt;
+  const end = fields.eventEndAt ?? current.eventEndAt;
+  return !end || (start && new Date(end) >= new Date(start));
+}
 function editableFields(body) {
-  const keys = ['title', 'summary', 'description', 'category', 'priority', 'issuingDepartment', 'coverImage', 'imageAlt', 'expiryDate', 'isPinned', 'status', 'audience', 'departments', 'academicYears'];
+  const keys = ['title', 'summary', 'description', 'category', 'priority', 'issuingDepartment', 'coverImage', 'imageAlt', 'eventStartAt', 'eventEndAt', 'expiryDate', 'isPinned', 'status', 'audience', 'departments', 'academicYears'];
   return Object.fromEntries(keys.filter(key => Object.hasOwn(body, key)).map(key => [key, body[key]]));
 }
 function filtersFor(req) {
@@ -112,6 +117,7 @@ async function create(req, res, next) {
   try {
     validate(req);
     const fields = editableFields(req.body);
+    if (!hasValidEventRange(fields)) return res.status(400).json({ success: false, message: 'Set an event start time before its end time.' });
     if (fields.audience === 'targeted' && !fields.departments?.length && !fields.academicYears?.length) return res.status(400).json({ success: false, message: 'Choose at least one department or academic year for a targeted notice.' });
     const notice = await Notice.create({ ...fields, postedBy: req.user._id });
     await audit(req.user, notice.status === 'draft' ? 'notice.created' : 'notice.published', 'notice', notice._id, notice.title);
@@ -126,6 +132,7 @@ async function update(req, res, next) {
     const before = await Notice.findById(req.params.id);
     if (!before) return res.status(404).json({ success: false, message: 'Notice not found.' });
     const fields = editableFields(req.body);
+    if (!hasValidEventRange(fields, before)) return res.status(400).json({ success: false, message: 'Set an event start time before its end time.' });
     const audience = fields.audience ?? before.audience;
     const departments = fields.departments ?? before.departments;
     const academicYears = fields.academicYears ?? before.academicYears;

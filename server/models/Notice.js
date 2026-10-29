@@ -7,8 +7,12 @@ const noticeSchema = new mongoose.Schema({
   priority: { type: String, enum: ['Low', 'Normal', 'Medium', 'High'], default: 'Normal' },
   postedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   issuingDepartment: { type: String, trim: true, maxlength: 100, default: '' },
-  coverImage: { type: String, trim: true, maxlength: 300, default: '' },
+  // Images selected in the admin editor are stored as data URLs so they work in
+  // both local development and serverless deployments without a separate file store.
+  coverImage: { type: String, trim: true, maxlength: 3000000, default: '' },
   imageAlt: { type: String, trim: true, maxlength: 250, default: '' },
+  eventStartAt: { type: Date, default: null },
+  eventEndAt: { type: Date, default: null },
   isDemo: { type: Boolean, default: false, index: true },
   demoKey: { type: String, trim: true, unique: true, sparse: true },
   expiryDate: { type: Date, default: null },

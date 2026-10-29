@@ -95,7 +95,7 @@ After changing Vercel environment variables, redeploy for the new values to take
 ## Features
 
 - Responsive CampusHub layout, persistent light/dark theme, searchable notices, category/priority filters, pagination, and list/grid views.
-- Notice drafts, archive/publish state, expiry, pins, department/year targeting, server-side audience filtering, summaries, issuing departments, and local cover artwork.
+- Notice drafts, archive/publish state, expiry, pins, department/year targeting, server-side audience filtering, summaries, issuing departments, optional event start/end times, and administrator photo uploads (JPG, PNG, or WebP up to 2 MB).
 - Profile group preferences, per-user bookmarks, unique read receipts, unread filtering, persistent in-app notifications, and a private task planner for assignments and study goals.
 - Academic calendar shows the full upcoming event list and month view; members can mark important events privately, and administrators can create or remove events.
 - Admin dashboard with database-backed category/activity metrics, member administration, and a read-only audit log.
@@ -132,7 +132,7 @@ No destructive migration is required. Existing notices without `status` or `audi
 
 ## Current scope and limitations
 
-- Attachments and a document library are not included because no storage provider is configured.
+- A document library and attachments other than the notice photo are not included because no storage provider is configured.
 - AI summaries are not included because no server-side AI provider or API key is configured.
 - Calendar views include a month grid and selected-day agenda; event editing and week view remain future enhancements.
 - Approval workflows, scheduled publishing, email notifications, and detailed read-percentage analytics remain future enhancements.
