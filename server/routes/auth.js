@@ -7,5 +7,6 @@ const strongPassword = value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]
 const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: 'draft-8', legacyHeaders: false, message: { success: false, message: 'Too many attempts. Please wait and try again.' } });
 router.post('/register', authLimiter, [body('name').trim().isLength({ min: 2, max: 80 }).withMessage('Name must be 2 to 80 characters'), body('email').trim().isEmail().normalizeEmail().withMessage('Enter a valid email'), body('password').custom(strongPassword).withMessage('Password must have 8 characters, uppercase, lowercase, number and symbol')], register);
 router.post('/login', authLimiter, [body('email').trim().isEmail().normalizeEmail().withMessage('Enter a valid email'), body('password').notEmpty()], login);
+router.post('/admin-login', authLimiter, [body('email').trim().isEmail().normalizeEmail().withMessage('Enter a valid email'), body('password').notEmpty()], login);
 router.put('/change-password', verifyToken, [body('currentPassword').notEmpty(), body('newPassword').custom(strongPassword).withMessage('New password must have 8 characters, uppercase, lowercase, number and symbol')], changePassword);
 module.exports = router;

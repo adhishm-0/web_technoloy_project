@@ -28,6 +28,13 @@ export function AuthProvider({ children }) {
     setUser(data.data.user);
     return data.data.user;
   }
+  async function adminLogin(credentials) {
+    const { data } = await api.post('/auth/admin-login', credentials);
+    localStorage.setItem('noticeboard_token', data.data.token);
+    localStorage.setItem('noticeboard_user', JSON.stringify(data.data.user));
+    setUser(data.data.user);
+    return data.data.user;
+  }
   async function register(details) {
     const safeDetails = Object.fromEntries(Object.entries(details).filter(([key]) => key !== 'role'));
     const { data } = await api.post('/auth/register', safeDetails);
@@ -42,7 +49,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
   function updateUser(profile) { localStorage.setItem('noticeboard_user', JSON.stringify(profile)); setUser(profile); }
-  const value = useMemo(() => ({ user, ready, login, register, logout, updateUser }), [user, ready]);
+  const value = useMemo(() => ({ user, ready, login, adminLogin, register, logout, updateUser }), [user, ready]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 export const useAuth = () => useContext(AuthContext);

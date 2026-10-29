@@ -15,6 +15,7 @@ async function login(req, res, next) {
   try { validate(req); const user = await User.findOne({ email: req.body.email.toLowerCase() });
     if (!user || !(await bcrypt.compare(req.body.password, user.password))) return res.status(401).json({ success: false, message: 'Email or password is incorrect.' });
     if (!user.isActive) return res.status(403).json({ success: false, message: 'This account has been deactivated.' });
+    if (req.path === '/admin-login' && user.role !== 'admin') return res.status(401).json({ success: false, message: 'Email or password is incorrect.' });
     result(res, { token: tokenFor(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } }, 'Signed in');
   } catch (e) { next(e); }
 }
